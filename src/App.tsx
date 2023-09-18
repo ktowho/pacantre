@@ -13,6 +13,7 @@ export const App = () => {
         { name: 'backward', keys: ['ArrowDown', 'KeyS'] },
         { name: 'leftward', keys: ['ArrowLeft', 'KeyA'] },
         { name: 'rightward', keys: ['ArrowRight', 'KeyD'] },
+        { name: 'shift', keys: ['Shift'] },
       ]}
     >
       <PointerLockControls />
@@ -23,7 +24,7 @@ export const App = () => {
       <Floor
         position={[0, -2, 0]}
         rotation-x={[- Math.PI * 0.5]}
-        scale={100}
+        scale={10}
       />
       <Player />
     </KeyboardControls>

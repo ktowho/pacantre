@@ -11,10 +11,10 @@ export const Player = () => {
     /**
      * Controls
      */
-    const { forward, backward, leftward, rightward } = getKeys()
+    const { forward, backward, leftward, rightward, shift } = getKeys()
 
     // Привязываем скорость к delta (для одинакового результата на любом fps)
-    const moveSpeed: number = delta * 5
+    let moveSpeed: number = delta * 5
     const axisY: THREE.Vector3 = new THREE.Vector3(0, 1, 0)
     const angle: number = Math.PI / 2
 
@@ -31,6 +31,12 @@ export const Player = () => {
     }
 
     // TODO: Движение по диагонали
+    if (shift) {
+      moveSpeed *= 2
+      console.log('shift');
+      
+    }
+
     if (forward) {
       setCameraDirection(moveSpeed)
     }
