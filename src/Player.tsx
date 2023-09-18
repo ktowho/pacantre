@@ -11,35 +11,26 @@ export const Player = () => {
     /**
      * Controls
      */
-
-    /**
-     * TODO: Скорее всего нужно изменить логику: создать физическое тело (условный шар), к нему присоединить камеру.
-     * Существующие недостатки: 1) Движение влево-вправо работает только по осям X и Z
-     * 2) Нельзя одновременно двигаться вперед и в сторону (по диагонали)
-     * 
-     * Возможно, есть хелпер получше. Но в App используется PointerLockControls, разные контроллеры вместе видимо не работают.
-     * Поэтому передвижение камеры было решено писать самому. Хотя лучше всего эту функцию выполняет FirstPersonControls
-     */
-
-    // Привязываем скорость к delta (для одинакового результата на любом fps)
-    let moveSpeed = delta * 5
-
     const { forward, backward, leftward, rightward } = getKeys()
 
+    // Привязываем скорость к delta (для одинакового результата на любом fps)
+    const moveSpeed: number = delta * 5
+    const axisY: THREE.Vector3 = new THREE.Vector3(0, 1, 0)
+    const angle: number = Math.PI / 2
+
     // Получаем направление камеры
-    const cameraDirection = state.camera.getWorldDirection(new THREE.Vector3())
+    const cameraDirection: THREE.Vector3 = state.camera.getWorldDirection(new THREE.Vector3())
 
-    const setCameraDirection = (moveSpeed: number, invert: boolean = false) => {
-      if (invert)
-        // Перезаписываем z и x
-        cameraDirection.set(cameraDirection.z, 0, cameraDirection.x)
-
-      // Убираем направление по Y, чтобы предотвратить перемещение в этом направлении
-      cameraDirection.set(cameraDirection.x, 0, cameraDirection.z)
+    // Убираем направление по Y, чтобы предотвратить перемещение в этом направлении
+    cameraDirection.setY(0)
+    
+    const setCameraDirection = (moveSpeed: number, rotation: boolean = false) => {
+      // Поворот вектора на 90 град. для перемещения "влево-вправо"
+      rotation ? cameraDirection.applyAxisAngle(axisY, angle) : null
       state.camera.position.add(cameraDirection.multiplyScalar(moveSpeed))
     }
 
-
+    // TODO: Движение по диагонали
     if (forward) {
       setCameraDirection(moveSpeed)
     }
@@ -49,14 +40,11 @@ export const Player = () => {
     }
 
     if (leftward) {
-      // При x < z, направление меняет знак
-      Math.abs(cameraDirection.x) < Math.abs(cameraDirection.z) ? moveSpeed = - moveSpeed : moveSpeed
-      setCameraDirection(-moveSpeed, true)
+      setCameraDirection(moveSpeed, true)
     }
 
     if (rightward) {
-      Math.abs(cameraDirection.x) < Math.abs(cameraDirection.z) ? moveSpeed = - moveSpeed : moveSpeed
-      setCameraDirection(moveSpeed, true)
+      setCameraDirection(-moveSpeed, true)
     }
   })
 
